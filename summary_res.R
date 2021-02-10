@@ -1,6 +1,6 @@
 library(tidyverse)
 
-dir <- "~/raw_data/G4PromFinder_outputs/coordinates_files/"
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/coordinates_files/"
 
 about_files_1 <- list.files(dir, pattern = "about.txt", full.names = T)
 
@@ -20,7 +20,8 @@ lapply(about_files_1, about_summary) %>%
 
 # random genome results
 
-dir <- "~/raw_data/G4PromFinder_outputs/coordinates_files_shuffled//"
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/coordinates_files_shuffled_kmer2/"
+
 
 about_files_2 <- list.files(dir, pattern = "about.txt", full.names = T)
 
@@ -29,9 +30,11 @@ about_summary(about_files_1[1])
 about_summary(about_files_2[1])
 
 lapply(about_files_2, about_summary) %>%
-  do.call(rbind, .) -> df2
+  do.call(rbind, .) %>%
+  arrange(match(id, df1$id)) -> df2
 
 # Sanity check
+
 
 identical(df1$id, df2$id)
 
@@ -53,9 +56,10 @@ df %>%
   # facet_grid(~ group) +
   scale_fill_manual("", values = c("#3182bd", "#de2d26"))
 
-#
+# dataViz coords
 
-dir <- "~/raw_data/G4PromFinder_outputs/coordinates_files/"
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/coordinates_files/"
+
 coor_files_1 <- list.files(dir, pattern = "coordinates.txt", full.names = T)
 
 load_coord <- function(coor_files) {
@@ -73,7 +77,7 @@ df1 %>%
   tally(sort = TRUE)  %>%
   mutate(group = "Genome") -> df1_summ
 
-dir <- "~/raw_data/G4PromFinder_outputs/coordinates_files_shuffled/"
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/coordinates_files_shuffled_kmer2/"
 coor_files_2 <- list.files(dir, pattern = "coordinates.txt", full.names = T)
 
 lapply(coor_files_2, load_coord) %>%
@@ -83,7 +87,11 @@ df2 %>%
   drop_na() %>%
   group_by(Strand, id) %>%
   tally(sort = TRUE) %>%
-  mutate(group = "Genome (shuffled)") -> df2_summ
+  mutate(group = "Genome (shuffled)") %>%
+  arrange(match(id, df1_summ$id)) -> df2_summ
+
+# sanity check
+identical(df1_summ$id, df1_summ$id)
 
 rbind(df1_summ, df2_summ) %>%
   group_by(Strand, group) %>%
@@ -118,11 +126,11 @@ rbind(df1_summ, df2_summ) %>%
                    position=position_stack(vjust=0.5, reverse = T), 
                    size = 3) +
   # geom_bar(aes(fill = group), position="dodge", stat="identity") +
-  labs(y = "# Predictions with G4PromFinder", x = "") +
+  labs(y = "# Predictions with G4PromFinder", x = "", caption = "2-kmer shuffling using") +
   coord_flip() + 
   facet_grid(~ group) +
   scale_fill_manual("", values = c("#3182bd", "#de2d26")) +
   theme_bw(base_family = "GillSans") -> p2
 
-ggsave(p2, filename = "G4PromFinder_2.png", path = dir, 
+ggsave(p2, filename = "G4PromFinder_kmer2.png", path = dir, 
        width = 10, height = 12)

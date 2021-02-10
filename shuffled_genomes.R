@@ -3,9 +3,12 @@
 library(Biostrings)
 library(seqinr)
 
-dir <- "~/raw_data"
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/genomes/"
+
 setwd(dir)
+
 fasta_files <- list.files(dir, pattern = ".fa", full.names = T)
+
 
 shuffle_seqs <- function(fasta_file) {
   
@@ -13,10 +16,14 @@ shuffle_seqs <- function(fasta_file) {
   
   x <- readDNAStringSet(fasta_file)
   
-  # function to suffle DNA sequences
+  # function to shuffle DNA sequences
   
   
-  randomizeSeq <- function(mystring){
+  randomizeSeq <- function(mystring, kmer = 2){
+    
+    # myChars <- substring(mystring, 
+    #           first = 1:(nchar(mystring) - 1), 
+    #           last = kmer:nchar(mystring)-1)
     # split the string into characters
     myChars <- unlist(strsplit(as.character(mystring),''))
     # randomize the order of characters

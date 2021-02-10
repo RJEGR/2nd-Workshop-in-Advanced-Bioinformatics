@@ -1,0 +1,15 @@
+
+
+Mean GC% content of genome sequence: 30.306905121456055%
+
+Total number of prediction in the analyzed sequence: 2132
+
+
+Mean GC-content of putative promoters: 34.59537210756723%
+Mean AT-content of the putative promoters AT-rich elements: 78.2701688555347%
+
+
+Percent of putative promoters with the -10 consensus TANNNT: 88.41463414634147%
+Percent of putative promoters with the -35 consensus TTGAC: 5.816135084427767%
+
+
