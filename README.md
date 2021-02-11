@@ -116,7 +116,34 @@ awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", 
 # for i in $(ls *fa); do  awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", gc+at }' $i; done
 ```
 
-
+| Index                                            | GC    |  Size   |
+| ------------------------------------------------ | ----- | :-----: |
+| Tenacibaculum_caenipelagi_gca_004363005          | 31.88 | 3266097 |
+| Tenacibaculum_dicentrarchi_gca_001483385         | 31.48 | 2918253 |
+| Tenacibaculum_dicentrarchi_gca_900239305         | 30.18 | 2663544 |
+| Tenacibaculum_dicentrarchi_gca_900239345         | 30.09 | 2804033 |
+| Tenacibaculum_discolor_gca_003664185             | 31.63 | 3376020 |
+| Tenacibaculum_finnmarkense_gca_900239185         | 30.91 | 2923232 |
+| Tenacibaculum_finnmarkense_gca_900239485         | 31.01 | 2955007 |
+| Tenacibaculum_gallaicum_gca_003387615            | 31.74 | 3422893 |
+| Tenacibaculum_holothuriorum_gca_002120225        | 31    | 3147654 |
+| Tenacibaculum_jejuense_gca_900198195             | 30.31 | 4614879 |
+| Tenacibaculum_litoreum_gca_003937815             | 31.92 | 3376591 |
+| Tenacibaculum_lutimaris_gca_003610735            | 31.9  | 2868850 |
+| Tenacibaculum_maritimum_ncimb_2154_gca_900119795 | 32.01 | 3435971 |
+| Tenacibaculum_mesophilum_gca_900129475           | 31.61 | 3286619 |
+| Tenacibaculum_skagerrakense_gca_004345825        | 31.25 | 3712612 |
+| Tenacibaculum_soleae_gca_001693415               | 30.25 | 3006944 |
+| Tenacibaculum_sp_4g03_gca_002700005              | 31.8  | 3812359 |
+| Tenacibaculum_sp_bg11_29_gca_002836595           | 29.77 | 4537492 |
+| Tenacibaculum_sp_dsm_106434_gca_003867015        | 32.01 | 3511704 |
+| Tenacibaculum_sp_m341_gca_004337695              | 30.09 | 5123891 |
+| Tenacibaculum_sp_mar_2009_124_gca_900105455      | 32.4  | 5524492 |
+| Tenacibaculum_sp_mar_2010_89_gca_900105985       | 29.32 | 4172912 |
+| Tenacibaculum_sp_sg_28_gca_002954385             | 34.37 | 2761692 |
+| Tenacibaculum_sp_sz_18_gca_002813915             | 31.14 | 4019179 |
+| Tenacibaculum_sp_tno020_gca_900239505            | 30.71 | 2452834 |
+| Tenacibaculum_todarodis_gca_001889045            | 30.73 | 3019213 |
 
 ### Data-Viz
 
@@ -125,6 +152,10 @@ Preliminary results
 ![Figure 1](G4PromFinder_outputs/G4PromFinder_kmer2.png)
 
 
+
+
+
+![Figure 1](G4PromFinder_outputs/S1_figure.png)
 
 ## Cites
 

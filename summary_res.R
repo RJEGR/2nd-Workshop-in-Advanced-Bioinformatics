@@ -106,7 +106,7 @@ rbind(df1_summ, df2_summ) %>%
   scale_fill_manual("", values = c("#3182bd", "#de2d26")) +
   theme_bw(base_size = 16, base_family = "GillSans") -> p1
 
-dir <- "~/raw_data/G4PromFinder_outputs/"
+# dir <- "~/raw_data/G4PromFinder_outputs/"
 
 ggsave(p1, filename = "G4PromFinder.png", path = dir, 
        width = 10, height = 14)
@@ -126,11 +126,42 @@ rbind(df1_summ, df2_summ) %>%
                    position=position_stack(vjust=0.5, reverse = T), 
                    size = 3) +
   # geom_bar(aes(fill = group), position="dodge", stat="identity") +
-  labs(y = "# Predictions with G4PromFinder", x = "", caption = "2-kmer shuffling using") +
+  labs(y = "# Predictions with G4PromFinder", x = "", caption = "2-kmer shuffling used") +
   coord_flip() + 
   facet_grid(~ group) +
   scale_fill_manual("", values = c("#3182bd", "#de2d26")) +
   theme_bw(base_family = "GillSans") -> p2
-
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs"
 ggsave(p2, filename = "G4PromFinder_kmer2.png", path = dir, 
        width = 10, height = 12)
+
+
+# by GC content
+
+y <- read.csv("~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/genomes/GC_content.csv") %>% as_tibble()
+
+rbind(df1_summ, df2_summ) %>%
+  group_by(Strand, group) %>%
+  mutate(pct = n / sum(n) * 100) %>%
+  inner_join(y) %>% 
+  filter(group %in% "Genome") %>%
+  filter(Strand %in% "positivo") %>%
+  mutate(d = n/Size * 1E6, 
+         Size = Size * 1E6) %>%
+  ggplot() +
+  geom_point(aes(y = d, 
+                 x = log(Size), color = GC), 
+             size = 3) +
+  facet_grid(~ Strand) +
+  labs(y = "N/Mbp", x = "log(Mbp)") +
+  theme_bw(base_size = 16, base_family = "GillSans") +
+  ggsci::scale_fill_material("blue-grey",  
+                             name = "GC %", 
+                             na.value = 'white',
+                             limits = c(0,1),
+                             labels = scales::percent_format(scale = 1))
+
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs"
+
+ggsave(p4, filename = "S1_figure.png", path = dir, 
+       width = 10, height = 10)
