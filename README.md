@@ -4,7 +4,7 @@ PhD St. Ricardo Gomez-Reyes
 
 ### Introduction
 
-Nucleic acid sequences rich in guanine are capable of forming four-stranded structures called G-quadruplexes, stabilized by Hoogsteen hydrogen bonding between a tetrad of guanine bases (also called Potential G-quadruplex forming sequences, PQSs). The formation of these telomeric quadruplexes has been shown to decrease the activity of the enzyme telomerase ( [8](javascript:;) ), which is responsible for elongating telomeres. Since elevated telomerase activity has been implicated in ∼85% of cancers ( [9](javascript:;) ), this has become a significant strategy for drug development ( [10](javascript:;) ) and molecules that bind to and stabilize G-quadruplexes have been identified. Recently, there has been growing interest in quadruplex-forming sequences elsewhere in the genome (Julian L. Huppert et al, 2005). 
+Nucleic acid sequences rich in guanine are capable of forming four-stranded structures called G-quadruplexes, stabilized by Hoogsteen hydrogen bonding between a tetrad of guanine bases (also called Potential G-quadruplex forming sequences, PQSs). The formation of these telomeric quadruplexes has been shown to decrease the activity of the enzyme telomerase, which is responsible for elongating telomeres. Since elevated telomerase activity has been implicated in ∼85% of cancers, this has become a significant strategy for drug development and molecules that bind to and stabilize G-quadruplexes have been identified. Recently, there has been growing interest in quadruplex-forming sequences elsewhere in the genome (Julian L. Huppert et al, 2005). 
 
 ![Figure 1](G4PromFinder_outputs/G-tetrad.jpeg)
 
@@ -14,7 +14,19 @@ In the genome, there exist many instances in which the PQSs possess more than fo
 
 
 
- Over the last few decades, computational genomics has tremendously contributed to decipher biology from genome sequences and related data. Considerable effort has been devoted to the prediction of transcription promoter and terminator sites that represent the essential "punctuation marks" for DNA transcription 
+Over the last few decades, computational genomics has tremendously contributed to decipher biology from genome sequences and related data. Considerable effort has been devoted to the prediction of transcription promoter and terminator sites that represent the essential "punctuation marks" for DNA transcription 
+
+
+
+In all living organisms the flow of genetic information starts with gene transcription, an essential process that is tightly regulated at each step (initiation, elongation, termination). In bacteria and archaea a single RNA polymerase (RNAP), evolutionary conserved features such as similar overall shape in RNAP, highly conserved active centers and similar contact to the nucleic acid chains have been recognized. Recently, G-quadruplex motifs, tertiary structures formed by nucleic acid sequences that are rich in guanine via non-Watson-Crick base pairing, have received a great deal of attention because of their putative role in promoter function.  Interestingly, more than 40% of human gene promoters contain one or more G-quadruplex motifs. In fungi G-quadruplex DNA motifs are significantly associated with promoter regions and to a lesser extent with open reading frames (ORFs), and these DNA motifs are more conserved than expected from a random distribution among related fungi suggesting in vivo functions that are under evolutionary constraint. Conserved G-quadruplex DNA motifs have been also reported in promoters of orthologous gene across phylogenetically distant prokaryotes
+
+G4PromFinder is an algorithm for the promoter prediction in bacterial genomes. It is recommended for GC rich genomes. G4PromFinder predicts putative promoters based on AT-rich elements and G-quadruplex DNA motifs. PromPredict instead identifies promoter regions on the basis of DNA double helix stability, therefore using a different strategy than consensus-based algorithms. In fact, PromPredict algorithm is based on the general observation that promoter regions are less stable than flanking regions [[21](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2049-x#ref-CR21), [30](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2049-x#ref-CR30)]. For this reason, PromPredict is a more general tool than consensus-based tools and could be more suitable in GC-rich bacteria featuring diverse σ factors.
+
+![Figure. 2](https://media.springernature.com/full/springer-static/image/art%3A10.1186%2Fs12859-018-2049-x/MediaObjects/12859_2018_2049_Fig1_HTML.gif)
+
+Figuure 2. A two-step procedure was used to detect putative promoters (Fig. [1](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2049-x#Fig1)). The first step consisted in the identification of the putative promoter “AT-rich element”. The second step was the identification of putative G-quadruplex motifs extended up to 50 bp upstream from the 5′-end of the selected AT-rich element. G-quadruplexes could have an influence on gene expression also when localized on the reverse strand relative to transcription direction. For this reason we searched for putative G-quadruplex motifs on either sense or antisense strand (Di Salvo et al 2018). 
+
+There is evidence that G-quadruplex formation in promoter “anchor” (− 35 sequence) elements could impair transcription initiation by RNA polymerase, or if present in the antisense strand of bacterial σ70 promoter between “anchor” and “AT-rich” (− 10 sequence) element could impair the initiation-elongation transition (the so-called promoter clearance). On one hand, recognition of double strand “anchor” sequence in promoters may be strongly influenced by G-quadruplex that could create a physical barrier that hinders RNAP binding or complicates promoter recognition by σ factors. On the other hand, RNAP binding might also facilitate G-quadruplex formation on antisense strand after promoter melting, which ultimately might hamper the initiation-elongation transition. Regulation of G-quadruplex folding and unfolding by G-quadruplex-binding proteins might represent a general mechanism to modulate promoter activity (Di Salvo et al 2018).
 
 
 
@@ -29,8 +41,8 @@ srohit@kneipe.lavis.unam.mx/home/srohit/unamworkshop2021/raw_data
 To do:
 
 1. Randomize Genome Simulations for 26 genomes (2-kmer)
-
-2. Test **G4PromFinder** for both, s
+2. Test **G4PromFinder** for both, genome and genome (shuffled)
+3. Intersect coordinates with CDS
 
 Cite: https://github.com/MarcoDiSalvo90/G4PromFinder
 
@@ -96,6 +108,28 @@ Then
 
 ```bash
 for i in $(ls kmer_2/*fn); do  python HMG4PromFinder.py $i; done
+```
+
+### Intersection 
+
+```bash
+# bed convertion for gtf ----
+
+# i=Tenacibaculum_caenipelagi_gca_004363005.gtf
+# awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' Tenacibaculum_sp_sg_28_gca_002954385.gtf | gtf2bed - > ${i%.gtf}.bed
+
+for i in $(ls *gtf); do awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' $i | gtf2bed - > ${i%.gtf}.bed;done
+
+# bed conversion for G4 ----
+
+i=Tenacibaculum_caenipelagi_gca_004363005.fa_coordinates.txt
+
+cat -t $i | awk 'NR>2 { print $1,$3,$4}' > ${i%.fa_coordinates.txt}.bed
+
+
+# then intersect
+bedtools intersect -wa -wb -a ${i%.gtf}.bed -b output.bed
+
 ```
 
 

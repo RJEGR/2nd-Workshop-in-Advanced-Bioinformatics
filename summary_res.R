@@ -155,13 +155,26 @@ rbind(df1_summ, df2_summ) %>%
   facet_grid(~ Strand) +
   labs(y = "N/Mbp", x = "log(Mbp)") +
   theme_bw(base_size = 16, base_family = "GillSans") +
-  ggsci::scale_fill_material("blue-grey",  
-                             name = "GC %", 
+  ggsci::scale_color_gsea(name = "GC %", 
                              na.value = 'white',
-                             limits = c(0,1),
-                             labels = scales::percent_format(scale = 1))
+                             limits = c(30,34),
+                             labels = scales::percent_format(scale = 1)) -> p4
 
 dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs"
 
 ggsave(p4, filename = "S1_figure.png", path = dir, 
-       width = 10, height = 10)
+       width = 5, height = 3.5)
+
+rbind(df1_summ, df2_summ) %>%
+  group_by(Strand, group) %>%
+  mutate(pct = n / sum(n) * 100) %>%
+  inner_join(y) %>% 
+  filter(group %in% "Genome") %>%
+  filter(Strand %in% "positivo") %>%
+  separate(id, c("Genus", "sp"), "_") %>%
+  mutate(d = n/Size * 1E6, 
+         Size = Size * 1E6) %>%
+  ggplot() +
+  geom_point(aes(y = d, 
+                 x = GC, color = sp), 
+             size = 3)
