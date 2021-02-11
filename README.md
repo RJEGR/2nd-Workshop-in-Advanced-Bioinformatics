@@ -102,6 +102,8 @@ for i in $(ls kmer_2/*fn); do  python HMG4PromFinder.py $i; done
 
 ### Calculate GC content per genome
 
+> https://www.biostars.org/p/300870/#476337
+
 ```bash
 awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", (gc*100)/(gc+at) }' Tenacibaculum_todarodis_gca_001889045.fa
 
