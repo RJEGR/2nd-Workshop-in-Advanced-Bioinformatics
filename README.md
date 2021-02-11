@@ -4,13 +4,13 @@ PhD St. Ricardo Gomez-Reyes
 
 ### Introduction
 
-Nucleic acid sequences rich in guanine are capable of forming four-stranded structures called G-quadruplexes, stabilized by Hoogsteen hydrogen bonding between a tetrad of guanine bases (also called Potential G-quadruplex forming sequences, PQSs). The formation of these telomeric quadruplexes has been shown to decrease the activity of the enzyme telomerase, which is responsible for elongating telomeres. Since elevated telomerase activity has been implicated in ∼85% of cancers, this has become a significant strategy for drug development and molecules that bind to and stabilize G-quadruplexes have been identified. Recently, there has been growing interest in quadruplex-forming sequences elsewhere in the genome (Julian L. Huppert et al, 2005). 
+Nucleic acid sequences rich in guanine are capable of forming four-stranded structures called G-quadruplexes, stabilized by Hoogsteen hydrogen bonding between a tetrad of guanine bases (also called Potential G-quadruplex forming sequences, PQS). At genome level, The PQS (figure 1) has been shown to decrease the activity of the enzyme telomerase, which is responsible for elongating telomeres. Since elevated telomerase activity has been implicated in ∼85% of cancers, this has become a significant strategy for drug development and molecules that bind to and stabilize G-quadruplexes have been identified (Julian L. Huppert et al, 2005). 
 
 ![Figure 1](G4PromFinder_outputs/G-tetrad.jpeg)
 
+Figure 1.
 
-
-In the genome, there exist many instances in which the PQSs possess more than four G tracks that can result in these sequences adopting dynamic structures equilibrating between multiple folds. Te ability of PQSs to fold intracellularly was first observed by immunostaining of ciliate telomeres and this study was followed by immunofuorescence of human cells to fnd folded G4s18. Te folding of PQSs to G4s has been implicated in causing strand breaks during replication in the absence of faithful helicases to resolve these roadblocks to polymerase bypass; when located in gene promoters, G4s can regulate transcription of the gene; G4s may be important in telomere biology; and they may function at origins of replication in humans. Experiments have found folded G4s are not limited to the genome as they can fold in the transcriptome ().
+In the genome, there exist many instances in which the PQSs possess more than four G tracks that can result in these sequences adopting dynamic structures equilibrating between multiple folds. Te folding of PQSs to G4s has been implicated in causing strand breaks during replication in the absence of faithful helicases to resolve these roadblocks to polymerase bypass; when located in gene promoters, G4s can regulate transcription of the gene; G4s may be important in telomere biology; and they may function at origins of replication in humans. Experiments have found folded G4s are not limited to the genome as they can fold in the transcriptome (Ding, Y. et al 2018).
 
 
 
@@ -24,7 +24,7 @@ G4PromFinder is an algorithm for the promoter prediction in bacterial genomes. I
 
 ![Figure. 2](https://media.springernature.com/full/springer-static/image/art%3A10.1186%2Fs12859-018-2049-x/MediaObjects/12859_2018_2049_Fig1_HTML.gif)
 
-Figuure 2. A two-step procedure was used to detect putative promoters (Fig. [1](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2049-x#Fig1)). The first step consisted in the identification of the putative promoter “AT-rich element”. The second step was the identification of putative G-quadruplex motifs extended up to 50 bp upstream from the 5′-end of the selected AT-rich element. G-quadruplexes could have an influence on gene expression also when localized on the reverse strand relative to transcription direction. For this reason we searched for putative G-quadruplex motifs on either sense or antisense strand (Di Salvo et al 2018). 
+Figure 2. A two-step procedure was used to detect putative promoters. The first step consisted in the identification of the putative promoter “AT-rich element”. The second step was the identification of putative G-quadruplex motifs extended up to 50 bp upstream from the 5′-end of the selected AT-rich element. G-quadruplexes could have an influence on gene expression also when localized on the reverse strand relative to transcription direction. For this reason we searched for putative G-quadruplex motifs on either sense or antisense strand (Di Salvo et al 2018). 
 
 There is evidence that G-quadruplex formation in promoter “anchor” (− 35 sequence) elements could impair transcription initiation by RNA polymerase, or if present in the antisense strand of bacterial σ70 promoter between “anchor” and “AT-rich” (− 10 sequence) element could impair the initiation-elongation transition (the so-called promoter clearance). On one hand, recognition of double strand “anchor” sequence in promoters may be strongly influenced by G-quadruplex that could create a physical barrier that hinders RNAP binding or complicates promoter recognition by σ factors. On the other hand, RNAP binding might also facilitate G-quadruplex formation on antisense strand after promoter melting, which ultimately might hamper the initiation-elongation transition. Regulation of G-quadruplex folding and unfolding by G-quadruplex-binding proteins might represent a general mechanism to modulate promoter activity (Di Salvo et al 2018).
 
@@ -92,9 +92,7 @@ print('Random:  ',''.join(dna))
 
 Instead of python, lets to use the home-made script [here](https://github.com/RJEGR/2nd-Workshop-in-Advanced-Bioinformatics/blob/main/shuffled_genomes.R) (based on https://stat.ethz.ch/pipermail/bioconductor/2013-March/051640.html)
 
-
-
-Based on literature (), lets shuffle the genomes based on a sliding window (2-kmer) using `biasaway k -h`  (note: Quadruplexes can be uni-, bi- or tetramolecular (Julian L. Huppert et al, 2005).
+Lets shuffle the genomes based on a sliding window (2-kmer) using `biasaway k -h`  (note: Quadruplexes can be uni-, bi- or tetramolecular (Julian L. Huppert et al, 2005).
 
 ```bash
 genome=genome.fa
@@ -126,9 +124,8 @@ i=Tenacibaculum_caenipelagi_gca_004363005.fa_coordinates.txt
 
 cat -t $i | awk 'NR>2 { print $1,$3,$4}' > ${i%.fa_coordinates.txt}.bed
 
-
 # then intersect
-bedtools intersect -wa -wb -a ${i%.gtf}.bed -b output.bed
+bedtools intersect -wa -wb -a ${i%.gtf}.bed -b ${i%.fa_coordinates.txt}.bed 
 
 ```
 
