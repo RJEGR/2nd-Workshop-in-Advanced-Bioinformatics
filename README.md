@@ -262,7 +262,7 @@ Preliminary results
 - For this genus, there are not relationship in the genome size and Number of promoter (AT-rich regions) prediction, as well as not relatioship between GC content
 - Genome wide feature analysis show a positive results at the genome coordiantes regions where  the promoters (AT-rich elements) were predicted.
 - Additionally, Our results  highlights a non- canonical elements for the Tenacibaculum genus at the non coding RNA regions. 
-- This analysis should be improve 
+- This analysis should be improved 
 
 ## Cites
 
