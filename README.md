@@ -56,8 +56,24 @@ Let's start
 
 ```bash
 ssh srohit@kneipe.lavis.unam.mx
-# zPjWZBN6aE
+# zPjWZBN6aE	
 ```
+
+
+
+split the fasta
+
+```bash
+i=Tenacibaculum_lutimaris_gca_003610735.fa
+
+# sed 's/ /_/g'
+# awk '/^>/ {OUT=substr($0,2) ".fa"}; {print >> OUT; close(OUT)}' $i
+
+
+for i in $(ls *.fa); do  faidx -x $i; done
+```
+
+
 
 Modify the G4PromFinder.py in order to make a loop genome-to-genome (script [here](https://github.com/RJEGR/2nd-Workshop-in-Advanced-Bioinformatics/blob/main/G4PromFinder_outputs/HMG4PromFinder.py));
 
@@ -66,12 +82,40 @@ Then:
 ```bash
 for i in $(ls *fa); do  python HMG4PromFinder.py $i; done
 #nohup for i in $(ls *fa); do  python HMG4PromFinder.py $i; done &
+
+
 ```
+
+
+
+Colapse all results in one file
+
+
+
+```bash
+# 1)  and remove files without results
+
+wc -l *coordinates.txt | grep ' 1 ' | awk '{print $2}'  > delete.txt
+while read line; do rm $line; done < delete.txt
+
+# 2) include a basename per sequence and save everything in 
+# awk -v var=${i%.fa_coordinates.txt}"\t" 'BEGIN{FS=OFS=var}{print value OFS $0}' $i | tail -n+3 |wc -l
+
+for i in $(ls *fa_coordinates.txt); do awk -v var=${i%.fa_coordinates.txt}"\t" 'BEGIN{FS=OFS=var}{print value OFS $0}' $i | tail -n+3 ;done > coordinates.txt
+```
+
+
+
+
 
 Copy results
 
 ```bash
 scp -r srohit@kneipe.lavis.unam.mx:/home/srohit/unamworkshop2021/G4PromFinder_outputs .
+
+scp srohit@kneipe.lavis.unam.mx:/home/srohit/unamworkshop2021/raw_data/coordinates.txt .
+
+# zPjWZBN6aE
 ```
 
 ## Test Negative control
@@ -118,15 +162,41 @@ for i in $(ls kmer_2/*fn); do  python HMG4PromFinder.py $i; done
 
 for i in $(ls *gtf); do awk '{ if ($0 ~ "transcript_id") print $0; else print $0" transcript_id \"\";"; }' $i | gtf2bed - > ${i%.gtf}.bed;done
 
-# bed conversion for G4 ----
+# subset genes
+# bed=Tenacibaculum_lutimaris_gca_003610735
+# cut -f8 $bed | sort | uniq -c
+for i in $(ls *gtf); grep '\tgene\t' $i > ${i%.bed}.genes.gtf
 
-i=Tenacibaculum_caenipelagi_gca_004363005.fa_coordinates.txt
+cat *genes.gtf > genes.gtf
 
-cat -t $i | awk 'NR>2 { print $1,$3,$4}' > ${i%.fa_coordinates.txt}.bed
+#or
+
+# awk '{if  ($3 == "mRNA") {print $0}}' file | awk '{print $1,$4,$5} OFS = "\t"
+
+
 
 # then intersect
-bedtools intersect -wa -wb -a ${i%.gtf}.bed -b ${i%.fa_coordinates.txt}.bed 
+# use -f option
+# bedtools intersect will report an overlap between A and B so long as there is at least one base pair is overlapping.50 % minimal overlap fraction
 
+bedtools intersect -wo -f 0.50 -a all.gtf -b coordinates.bed > intersect_bed_f50.txt
+cut -f3 intersect_bed_f50.txt| sort | uniq -c
+
+# 
+
+bedtools intersect -wo -f 0.50 -a Tenacibaculum_dicentrarchi_gca_001483385.gtf -b coordinates.bed > Tenacibaculum_dicentrarchi_gca_001483385.intersect_bed_f50.txt
+
+bedtools intersect -wo -f 0.50 -a Tenacibaculum_sp_dsm_106434_gca_003867015.gtf -b coordinates.bed > Tenacibaculum_sp_dsm_106434_gca_003867015.intersect_bed_f50.txt
+
+
+```
+
+
+
+#  Prepare genome / gene table
+
+```bash
+grep "^>" *random.fs | awk '{print $1}' | sed 's/:>/\t/g' | sed 's/.random.fs//g' > genome_metadata.txt
 ```
 
 
@@ -182,7 +252,7 @@ awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", 
 
 Preliminary results
 
-![Figure 1](G4PromFinder_outputs/G4PromFinder_kmer2.png)
+![Figure 1](G4PromFinder_outputs/S2_figure.png)
 
 
 

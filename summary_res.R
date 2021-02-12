@@ -78,6 +78,7 @@ df1 %>%
   mutate(group = "Genome") -> df1_summ
 
 dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/coordinates_files_shuffled_kmer2/"
+
 coor_files_2 <- list.files(dir, pattern = "coordinates.txt", full.names = T)
 
 lapply(coor_files_2, load_coord) %>%
@@ -119,6 +120,8 @@ rbind(df1_summ, df2_summ) %>%
   mutate(id = forcats::fct_reorder(id, Rank)) %>%
   group_by(id, group) %>%
   mutate(pct = round(raf(n), digits = 2)) %>%
+  # mutate(sep = id) %>%
+  # separate(sep, c("Genus", "sp"), "_") %>%
   # mutate(lPos = cumsum(pct) - pct/2) %>%
   ggplot(aes(x = id, y = n)) +
   geom_col(aes(fill = Strand)) +
@@ -128,9 +131,10 @@ rbind(df1_summ, df2_summ) %>%
   # geom_bar(aes(fill = group), position="dodge", stat="identity") +
   labs(y = "# Predictions with G4PromFinder", x = "", caption = "2-kmer shuffling used") +
   coord_flip() + 
-  facet_grid(~ group) +
+  facet_grid(~ group, scales = "free_y") +
   scale_fill_manual("", values = c("#3182bd", "#de2d26")) +
   theme_bw(base_family = "GillSans") -> p2
+
 dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs"
 ggsave(p2, filename = "G4PromFinder_kmer2.png", path = dir, 
        width = 10, height = 12)
@@ -143,16 +147,20 @@ y <- read.csv("~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/genome
 rbind(df1_summ, df2_summ) %>%
   group_by(Strand, group) %>%
   mutate(pct = n / sum(n) * 100) %>%
+  mutate(sep = id) %>%
+  separate(sep, c("Genus", "sp"), "_") %>%
   inner_join(y) %>% 
   filter(group %in% "Genome") %>%
   filter(Strand %in% "positivo") %>%
   mutate(d = n/Size * 1E6, 
          Size = Size * 1E6) %>%
+  mutate(sp = forcats::fct_reorder(sp, Size)) %>%
   ggplot() +
   geom_point(aes(y = d, 
-                 x = log(Size), color = GC), 
-             size = 3) +
-  facet_grid(~ Strand) +
+                 size = n,
+                 x = log(Size), color = GC)) +
+  facet_wrap(~ sp) +
+  # facet_grid( ~ Strand) +
   labs(y = "N/Mbp", x = "log(Mbp)") +
   theme_bw(base_size = 16, base_family = "GillSans") +
   ggsci::scale_color_gsea(name = "GC %", 
@@ -163,7 +171,7 @@ rbind(df1_summ, df2_summ) %>%
 dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs"
 
 ggsave(p4, filename = "S1_figure.png", path = dir, 
-       width = 5, height = 3.5)
+       width = 10, height = 10)
 
 rbind(df1_summ, df2_summ) %>%
   group_by(Strand, group) %>%
@@ -178,3 +186,6 @@ rbind(df1_summ, df2_summ) %>%
   geom_point(aes(y = d, 
                  x = GC, color = sp), 
              size = 3)
+
+
+
