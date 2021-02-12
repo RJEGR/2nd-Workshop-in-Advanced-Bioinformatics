@@ -56,7 +56,7 @@ df %>%
   # facet_grid(~ group) +
   scale_fill_manual("", values = c("#3182bd", "#de2d26"))
 
-# dataViz coords
+# dataViz coords ----
 
 dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/coordinates_files/"
 
@@ -136,6 +136,8 @@ rbind(df1_summ, df2_summ) %>%
   theme_bw(base_family = "GillSans") -> p2
 
 dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs"
+
+
 ggsave(p2, filename = "G4PromFinder_kmer2.png", path = dir, 
        width = 10, height = 12)
 
@@ -144,7 +146,11 @@ ggsave(p2, filename = "G4PromFinder_kmer2.png", path = dir,
 
 y <- read.csv("~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/genomes/GC_content.csv") %>% as_tibble()
 
+rm_genomes <- c("Tenacibaculum_dicentrarchi_gca_001483385", "Tenacibaculum_sp_dsm_106434_gca_003867015", "Tenacibaculum_sp_sz_18_gca_002813915", "Tenacibaculum_todarodis_gca_001889045")
+
 rbind(df1_summ, df2_summ) %>%
+  ungroup() %>%
+  filter(!id %in% rm_genomes) %>%
   group_by(Strand, group) %>%
   mutate(pct = n / sum(n) * 100) %>%
   mutate(sep = id) %>%
@@ -154,7 +160,10 @@ rbind(df1_summ, df2_summ) %>%
   filter(Strand %in% "positivo") %>%
   mutate(d = n/Size * 1E6, 
          Size = Size * 1E6) %>%
-  mutate(sp = forcats::fct_reorder(sp, Size)) %>%
+  mutate(so_sort = as.integer(as.factor(sp))) %>%
+  arrange(so_sort) %>%
+  mutate(sp = forcats::fct_reorder(sp, so_sort)) %>%
+  # mutate(sp = forcats::fct_reorder(sp, Size)) %>%
   ggplot() +
   geom_point(aes(y = d, 
                  size = n,

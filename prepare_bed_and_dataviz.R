@@ -21,14 +21,18 @@ df %>%
   filter(V1 %in% "Chromosome")
 
 
-#
+# after running bed intersection, lets visualize our results
+
+
 mtd_file <- "/Users/cigom/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/genome_metadata.txt"
 
 mtd <- read.delim(mtd_file, sep = "\t", header = F) %>% as_tibble() %>% distinct()
 names(mtd) <- c("genome", "Index")
 
 
-mtd %>% filter(Index %in% "Chromosome") %>% pull(genome) -> rm_genomes
+mtd %>% 
+  filter(Index %in% "Chromosome") %>% 
+  pull(genome) -> rm_genomes
 
 
 
@@ -67,3 +71,4 @@ dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_
 ggsave(p1, filename = "S2_figure.png", path = dir, 
        width = 10, height = 8)  
   
+# how many G4 are in coord genes or at the ends of the non coding genes, cds is coding region, lets intersect the oposite coordinates from the 
