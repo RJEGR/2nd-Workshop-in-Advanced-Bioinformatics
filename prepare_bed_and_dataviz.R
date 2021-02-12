@@ -17,10 +17,6 @@ df %>%
   write.table(., sep = "\t",file = paste0(dir, "coordinates.bed"), quote = F, 
               col.names = F, row.names = F)
 
-df %>%
-  filter(V1 %in% "Chromosome")
-
-
 # after running bed intersection, lets visualize our results
 
 
@@ -42,13 +38,18 @@ file <- list.files(path = dir, pattern = "intersect_bed_f50.txt", full.names = T
 
 # filter(grepl("ASM148338v1", V9))
 
-read.delim(file, sep = "\t", header = F) %>%
+read.delim(file[1], sep = "\t", header = F) %>%
   as_tibble() %>%
-  rename(V1 = "Index") %>% 
+  rename("Index" = "V1") %>% 
   left_join(., mtd,by = "Index") %>%
   distinct() -> df_viz
 
+ncRNA_labels <- c("ncRNA|ncRNA_gene|tRNA|pseudogene|tmRNA")
+
 df_viz %>%
+  mutate(V3 = ifelse(grepl(ncRNA_labels, V9), "ncRNA", V3)) %>%
+  filter(!V3 %in% c("exon", "gene", "transcript")) %>%
+  mutate(V3 = ifelse(V3 == "five_prime_utr", "ncRNA", V3)) %>%
   filter(!genome %in% rm_genomes) %>%
   group_by(Index, V3, genome) %>%
   tally(sort = T) %>%
@@ -72,3 +73,22 @@ ggsave(p1, filename = "S2_figure.png", path = dir,
        width = 10, height = 8)  
   
 # how many G4 are in coord genes or at the ends of the non coding genes, cds is coding region, lets intersect the oposite coordinates from the 
+
+# subseting the non coding RNAs 
+
+df_viz %>% 
+  filter(grepl("ncRNA|ncRNA_gene|tRNA|pseudogene|tmRNA", V9)) %>%
+  filter(!genome %in% rm_genomes) %>%
+  group_by(Index, V3, genome) %>%
+  tally(sort = T) %>%
+  mutate(sp = genome) %>%
+  separate(sp, c("Genus", "sp"), "_") %>%
+  arrange(sp) %>% 
+  group_by(genome) %>%
+  mutate(pct = n / sum(n) * 100, sp = as.integer(as.factor(sp))) %>%
+  mutate(genome = forcats::fct_reorder(genome, sp)) %>%
+  # mutate(genome = forcats::fct_reorder(genome, n)) %>%
+  ggplot() +
+  geom_col(aes(y = n, x = genome, fill = V3)) +
+  coord_flip() +
+  ggsci::scale_fill_aaas(name = "")
