@@ -58,7 +58,7 @@ df %>%
 
 # dataViz coords ----
 
-dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/coordinates_files/"
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/coordinates_files_genome/"
 
 coor_files_1 <- list.files(dir, pattern = "coordinates.txt", full.names = T)
 
@@ -144,7 +144,7 @@ ggsave(p2, filename = "G4PromFinder_kmer2.png", path = dir,
 
 # by GC content
 
-y <- read.csv("~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/genomes/GC_content.csv") %>% as_tibble()
+y <- read.csv("~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/GC_content.csv") %>% as_tibble()
 
 rm_genomes <- c("Tenacibaculum_dicentrarchi_gca_001483385", "Tenacibaculum_sp_dsm_106434_gca_003867015", "Tenacibaculum_sp_sz_18_gca_002813915", "Tenacibaculum_todarodis_gca_001889045")
 
@@ -198,3 +198,31 @@ rbind(df1_summ, df2_summ) %>%
 
 
 
+# 
+
+rbind(df1_summ, df2_summ) %>%
+  ungroup() %>%
+  filter(!id %in% rm_genomes) %>%
+  group_by(Strand, group) %>%
+  mutate(pct = n / sum(n) * 100) %>%
+  mutate(sep = id) %>%
+  separate(sep, c("Genus", "sp"), "_") %>%
+  inner_join(y) %>% 
+  filter(group %in% "Genome") %>%
+  filter(Strand %in% "positivo") %>%
+  mutate(d = n/Size * 1E6, 
+         Size = Size * 1E6) %>%
+  mutate(so_sort = as.integer(as.factor(sp))) %>%
+  arrange(so_sort) %>%
+  mutate(sp = forcats::fct_reorder(sp, so_sort)) %>%
+  ggplot(aes(x= GC, y = d)) +
+  geom_point() +
+  geom_smooth() +
+  ggpubr::stat_cor(method = "pearson") +
+  labs(y = "N/Mbp (AT-rich elements)", x = "GC %") +
+  theme_bw(base_size = 16, base_family = "GillSans") -> p5
+
+dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs"
+
+ggsave(p5, filename = "S3_figure.png", path = dir, 
+       width = 10, height = 10)

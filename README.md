@@ -1,6 +1,6 @@
 # Studying Non-Canonical G-Quadruplex repertoire in Tenacibaculum: A Case Study
 
-PhD St. Ricardo Gomez-Reyes
+**Teamwork**: Gomez-Reyes Ricardo, Juarez-Figueroa Ulises E., Hurtado Enrique, Ramirez Obed, Satyam Rohit
 
 ### Introduction
 
@@ -12,11 +12,7 @@ Figure 1.
 
 In the genome, there exist many instances in which the PQSs possess more than four G tracks that can result in these sequences adopting dynamic structures equilibrating between multiple folds. Te folding of PQSs to G4s has been implicated in causing strand breaks during replication in the absence of faithful helicases to resolve these roadblocks to polymerase bypass; when located in gene promoters, G4s can regulate transcription of the gene; G4s may be important in telomere biology; and they may function at origins of replication in humans. Experiments have found folded G4s are not limited to the genome as they can fold in the transcriptome (Ding, Y. et al 2018).
 
-
-
 Over the last few decades, computational genomics has tremendously contributed to decipher biology from genome sequences and related data. Considerable effort has been devoted to the prediction of transcription promoter and terminator sites that represent the essential "punctuation marks" for DNA transcription 
-
-
 
 In all living organisms the flow of genetic information starts with gene transcription, an essential process that is tightly regulated at each step (initiation, elongation, termination). In bacteria and archaea a single RNA polymerase (RNAP), evolutionary conserved features such as similar overall shape in RNAP, highly conserved active centers and similar contact to the nucleic acid chains have been recognized. Recently, G-quadruplex motifs, tertiary structures formed by nucleic acid sequences that are rich in guanine via non-Watson-Crick base pairing, have received a great deal of attention because of their putative role in promoter function.  Interestingly, more than 40% of human gene promoters contain one or more G-quadruplex motifs. In fungi G-quadruplex DNA motifs are significantly associated with promoter regions and to a lesser extent with open reading frames (ORFs), and these DNA motifs are more conserved than expected from a random distribution among related fungi suggesting in vivo functions that are under evolutionary constraint. Conserved G-quadruplex DNA motifs have been also reported in promoters of orthologous gene across phylogenetically distant prokaryotes
 
@@ -27,6 +23,8 @@ G4PromFinder is an algorithm for the promoter prediction in bacterial genomes. I
 Figure 2. A two-step procedure was used to detect putative promoters. The first step consisted in the identification of the putative promoter “AT-rich element”. The second step was the identification of putative G-quadruplex motifs extended up to 50 bp upstream from the 5′-end of the selected AT-rich element. G-quadruplexes could have an influence on gene expression also when localized on the reverse strand relative to transcription direction. For this reason we searched for putative G-quadruplex motifs on either sense or antisense strand (Di Salvo et al 2018). 
 
 There is evidence that G-quadruplex formation in promoter “anchor” (− 35 sequence) elements could impair transcription initiation by RNA polymerase, or if present in the antisense strand of bacterial σ70 promoter between “anchor” and “AT-rich” (− 10 sequence) element could impair the initiation-elongation transition (the so-called promoter clearance). On one hand, recognition of double strand “anchor” sequence in promoters may be strongly influenced by G-quadruplex that could create a physical barrier that hinders RNAP binding or complicates promoter recognition by σ factors. On the other hand, RNAP binding might also facilitate G-quadruplex formation on antisense strand after promoter melting, which ultimately might hamper the initiation-elongation transition. Regulation of G-quadruplex folding and unfolding by G-quadruplex-binding proteins might represent a general mechanism to modulate promoter activity (Di Salvo et al 2018).
+
+#### Discusion
 
 
 
@@ -103,10 +101,6 @@ while read line; do rm $line; done < delete.txt
 
 for i in $(ls *fa_coordinates.txt); do awk -v var=${i%.fa_coordinates.txt}"\t" 'BEGIN{FS=OFS=var}{print value OFS $0}' $i | tail -n+3 ;done > coordinates.txt
 ```
-
-
-
-
 
 Copy results
 
@@ -191,9 +185,7 @@ bedtools intersect -wo -f 0.50 -a Tenacibaculum_sp_dsm_106434_gca_003867015.gtf 
 
 ```
 
-
-
-#  Prepare genome / gene table
+#  Prepare genome - gene table
 
 ```bash
 grep "^>" *random.fs | awk '{print $1}' | sed 's/:>/\t/g' | sed 's/.random.fs//g' > genome_metadata.txt
@@ -258,19 +250,27 @@ Preliminary results
 
 
 
-![Figure 1](G4PromFinder_outputs/S1_figure.png)
+![Figure 2](G4PromFinder_outputs/S1_figure.png)
+
+![Figure 3](G4PromFinder_outputs/S3_figure.png)
+
+
+
+### Discusion
+
+- There are an average a GC content of 30-34 % for the Tenacibaculum genus
+- For this genus, there are not relationship in the genome size and Number of promoter (AT-rich regions) prediction, as well as not relatioship between GC content
+- Genome wide feature analysis show a positive results at the genome coordiantes regions where  the promoters (AT-rich elements) were predicted.
+- Additionally, Our results  highlights a non- canonical elements for the Tenacibaculum genus at the non coding RNA regions. 
+- This analysis should be improve 
 
 ## Cites
 
 Aziz Khan, Rafael Riudavets Puig, Paul Boddie, Anthony Mathelier, BiasAway: command-line and web server to generate nucleotide composition-matched DNA background sequences, *Bioinformatics*, 2020;, btaa928, https://doi.org/10.1093/bioinformatics/btaa928
 
-
-
 Ding, Y., Fleming, A. M., & Burrows, C. J. (2018). Case studies on potential G-quadruplex-forming sequences from the bacterial orders Deinococcales and Thermales derived from a survey of published genomes. *Scientific reports*, *8*(1), 1-11. DOI:10.1038/s41598-018-33944-4
 
 Di Salvo, M., Pinatel, E., Talà, A., Fondi, M., Peano, C., & Alifano, P. (2018). G4PromFinder: an algorithm for predicting transcription promoters in GC-rich bacterial genomes based on AT-rich elements and G-quadruplex motifs. *BMC bioinformatics*, *19*(1), 1-11. https://doi.org/10.1186/s12859-018-2049-x
-
-
 
 Julian L. Huppert, Shankar Balasubramanian, Prevalence of quadruplexes in the human genome, *Nucleic Acids Research*, Volume 33, Issue 9, 1 May 2005, Pages 2908–2916, https://doi.org/10.1093/nar/gki609
 
