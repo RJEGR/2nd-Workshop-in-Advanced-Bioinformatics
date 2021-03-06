@@ -32,13 +32,13 @@ mtd %>%
 
 
 
-dir <- "/Users/cigom/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/genomes/gtf/"
+dir <- "/Users/cigom/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/"
 
-file <- list.files(path = dir, pattern = "intersect_bed_f50.txt", full.names = T)
+file <- list.files(path = dir, pattern = "intersect_all_bed_f50.txt", full.names = T)
 
 # filter(grepl("ASM148338v1", V9))
 
-read.delim(file[1], sep = "\t", header = F) %>%
+read.delim(file, sep = "\t", header = F) %>%
   as_tibble() %>%
   rename("Index" = "V1") %>% 
   left_join(., mtd,by = "Index") %>%
@@ -72,23 +72,45 @@ dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_
 ggsave(p1, filename = "S2_figure.png", path = dir, 
        width = 10, height = 8)  
   
-# how many G4 are in coord genes or at the ends of the non coding genes, cds is coding region, lets intersect the oposite coordinates from the 
+# 
+dir <- "/Users/cigom/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs/"
 
-# subseting the non coding RNAs 
+file <- list.files(path = dir, pattern = "GC_content_per_gene.txt", full.names = T)
 
-df_viz %>% 
-  filter(grepl("ncRNA|ncRNA_gene|tRNA|pseudogene|tmRNA", V9)) %>%
+
+read.delim(file, sep = "\t", header = F) %>%
+  as_tibble() -> genome_splited_stats
+
+names(genome_splited_stats) <- c("Index", "GC", "length")
+
+df_viz %>%
+  mutate(V3 = ifelse(grepl(ncRNA_labels, V9), "ncRNA", V3)) %>%
+  filter(!V3 %in% c("exon", "gene", "transcript")) %>%
+  mutate(V3 = ifelse(V3 == "five_prime_utr", "ncRNA", V3)) %>%
   filter(!genome %in% rm_genomes) %>%
   group_by(Index, V3, genome) %>%
   tally(sort = T) %>%
+  ungroup() %>%
+  left_join(genome_splited_stats, by = "Index") %>%
+  mutate(d = n/length* 1E6) %>%
   mutate(sp = genome) %>%
   separate(sp, c("Genus", "sp"), "_") %>%
   arrange(sp) %>% 
   group_by(genome) %>%
-  mutate(pct = n / sum(n) * 100, sp = as.integer(as.factor(sp))) %>%
-  mutate(genome = forcats::fct_reorder(genome, sp)) %>%
-  # mutate(genome = forcats::fct_reorder(genome, n)) %>%
-  ggplot() +
-  geom_col(aes(y = n, x = genome, fill = V3)) +
-  coord_flip() +
-  ggsci::scale_fill_aaas(name = "")
+  mutate(pct = n / sum(n) * 100, ) %>%
+  mutate(genome = forcats::fct_reorder(genome, as.integer(as.factor(sp)))) -> dv
+
+#esquisse::esquisser()
+
+dv %>%
+  filter(!sp %in% "sp") %>%
+  ggplot(.) +
+  aes(x = GC, y = d) +
+  geom_point(aes(size = n), alpha = 1) +
+  # ggsci::scale_color_rickandmorty(name = "Tenacibaculum") +
+  scale_size(name = "n predictions") +
+  ggsci::scale_color_aaas() +
+  labs(y = "N/Mbp (AT-rich elements density)", x = "GC %") +
+  theme_bw(base_size = 16, base_family = "GillSans") +
+  facet_wrap(vars(sp))
+

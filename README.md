@@ -2,6 +2,16 @@
 
 **Teamwork**: Gomez-Reyes Ricardo, Juarez-Figueroa Ulises E., Hurtado Enrique, Ramirez Obed, Satyam Rohit
 
+### Highlights
+
+In addition to G4-Quadruplex predictions, we developed an analysis to decipher the AT-elements than usually found at the 3 primer / 5 primer as a G4-Quadruplex-promoter elements. For this task we use a python software. The results showed than:
+
+- There were from one to three thousand of potential prediction for this propoter elements
+- For this genus, there are not relationship in the genome size and Number of promoter (AT-rich regions) prediction, as well as not relatioship between GC content
+- Genome wide feature analysis show a positive results at the genome coordiantes regions where  the promoters (AT-rich elements) were predicted.
+- Additionally, Our results  highlights a non- canonical elements for the Tenacibaculum genus at the non coding RNA regions. 
+- This analysis should be improved 
+
 ### Introduction
 
 Nucleic acid sequences rich in guanine are capable of forming four-stranded structures called G-quadruplexes, stabilized by Hoogsteen hydrogen bonding between a tetrad of guanine bases (also called Potential G-quadruplex forming sequences, PQS). At genome level, The PQS (figure 1) has been shown to decrease the activity of the enzyme telomerase, which is responsible for elongating telomeres. Since elevated telomerase activity has been implicated in ∼85% of cancers, this has become a significant strategy for drug development and molecules that bind to and stabilize G-quadruplexes have been identified (Julian L. Huppert et al, 2005). 
@@ -33,7 +43,7 @@ There is evidence that G-quadruplex formation in promoter “anchor” (− 35
 Inputs
 
 ```bash
-srohit@kneipe.lavis.unam.mx/home/srohit/unamworkshop2021/raw_data
+srohit@kneipe.lavis.unam.mx:/home/srohit/unamworkshop2021/raw_data
 ```
 
 To do:
@@ -87,8 +97,6 @@ for i in $(ls *fa); do  python HMG4PromFinder.py $i; done
 
 
 Colapse all results in one file
-
-
 
 ```bash
 # 1)  and remove files without results
@@ -200,7 +208,16 @@ grep "^>" *random.fs | awk '{print $1}' | sed 's/:>/\t/g' | sed 's/.random.fs//g
 ```bash
 awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", (gc*100)/(gc+at) }' Tenacibaculum_todarodis_gca_001889045.fa
 
-# for i in $(ls *fa); do  awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", (gc*100)/(gc+at) }' $i; done
+for i in $(ls *fa); do  echo ${i%.fa};awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", (gc*100)/(gc+at) }' $i; done
+
+# per sequenece
+for i in $(ls *fa); do  echo ${i%.fa}; done > id.txt
+for i in $(ls *fa); do  awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", gc+at }' $i; done > length.txt
+for i in $(ls *fa); do  awk '!/^>/{gc+=gsub(/[gGcC]/,""); at+=gsub(/[aAtT]/,"");} END{ printf "%.2f\n", (gc*100)/(gc+at) }' $i; done > GC.txt
+
+paste -d"\t" id.txt GC.txt length.txt | grep -v 'Chromosome' > GC_content_per_gene.txt
+
+ssh srohit@kneipe.lavis.unam.mx:/home/srohit/unamworkshop2021/raw_data/fasta_splited/GC_content_per_gene.txt .
 ```
 
 ### Calculate genome length
@@ -256,9 +273,13 @@ Preliminary results
 
 
 
-### Discusion
+### Highlights
 
-- There are an average a GC content of 30-34 % for the Tenacibaculum genus
+
+
+In addition to G4-Quadruplex predictions, we developed an analysis to decipher the AT-elements than usually found at the 3 primer / 5 primer as a G4-Quadruplex-promoter elements. For this task we use a python software. The results showed than:
+
+- There were from one to three thousand of potential prediction for this propoter elements
 - For this genus, there are not relationship in the genome size and Number of promoter (AT-rich regions) prediction, as well as not relatioship between GC content
 - Genome wide feature analysis show a positive results at the genome coordiantes regions where  the promoters (AT-rich elements) were predicted.
 - Additionally, Our results  highlights a non- canonical elements for the Tenacibaculum genus at the non coding RNA regions. 

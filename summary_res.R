@@ -217,12 +217,12 @@ rbind(df1_summ, df2_summ) %>%
   mutate(sp = forcats::fct_reorder(sp, so_sort)) %>%
   ggplot(aes(x= GC, y = d)) +
   geom_point() +
-  geom_smooth() +
+  # geom_smooth() +
   ggpubr::stat_cor(method = "pearson") +
   labs(y = "N/Mbp (AT-rich elements)", x = "GC %") +
-  theme_bw(base_size = 16, base_family = "GillSans") -> p5
+  theme_bw(base_size = 10, base_family = "GillSans") -> p5
 
 dir <- "~/Documents/GitHub/2nd-Workshop-in-Advanced-Bioinformatics/G4PromFinder_outputs"
 
 ggsave(p5, filename = "S3_figure.png", path = dir, 
-       width = 10, height = 10)
+       width = 3.5, height = 3.5)
